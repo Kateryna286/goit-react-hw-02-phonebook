@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import './App.css';
-import ContactsList from './ContactsList';
-import Filter from './Filter';
-import Form from './Form';
+import ContactsList from './ContactList/ContactsList';
+import Filter from './Filter/Filter';
+import Form from './Forms/Form';
 
 class App extends Component {
   state = {
@@ -16,10 +16,11 @@ class App extends Component {
     filter: '',
   };
 
-  // contactId = uuidv4();
-
   formSubmitHandler = data => {
-    console.log(data);
+    if (this.state.contacts.some(contact => contact.name === data.name)) {
+      alert(`${data.name} already exist in contact list`);
+      return;
+    }
 
     const contact = {
       id: uuidv4(),
@@ -36,22 +37,41 @@ class App extends Component {
     this.setState({ filter: event.currentTarget.value });
   };
 
-  render() {
-    //const contactsArray = this.state.contacts;
-    const normalizedFilter = this.state.filter.toLowerCase();
-    const filteredContacts = this.state.contacts.filter(contact =>
+  getVisibleContacts = () => {
+    const { filter, contacts } = this.state;
+    const normalizedFilter = filter.toLowerCase();
+
+    return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalizedFilter),
     );
+  };
+
+  handleDeleteContact = event => {
+    this.setState({
+      contacts: this.state.contacts.filter(
+        contact => contact.id !== event.currentTarget.id,
+      ),
+    });
+  };
+
+  render() {
+    const filteredContacts = this.getVisibleContacts();
 
     return (
-      <div className="App">
-        <div>
+      <div className="container">
+        <div className="formsContainer">
           <Form onSubmit={this.formSubmitHandler} />
         </div>
-        <Filter value={this.state.filter} onChange={this.changeFilter} />
-        <div>
-          <h2>Contacts</h2>
-          <ContactsList contacts={filteredContacts} />
+
+        <div className="contactsContainer">
+          <div className="contacts">
+            <h2>Contacts</h2>
+            <Filter value={this.state.filter} onChange={this.changeFilter} />
+            <ContactsList
+              contacts={filteredContacts}
+              onClick={this.handleDeleteContact}
+            />
+          </div>
         </div>
       </div>
     );

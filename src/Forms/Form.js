@@ -29,7 +29,7 @@ class Form extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <form onSubmit={this.handleSubmit} className="form">
         <label>
           <h2>Name</h2>
           <input
@@ -54,8 +54,8 @@ class Form extends Component {
             onChange={this.handleChange}
           />
         </label>
-        <button type="submit" className="InputButton">
-          Save
+        <button type="submit" className="button">
+          Add contact
         </button>
       </form>
     );
